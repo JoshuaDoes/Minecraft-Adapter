@@ -338,7 +338,8 @@ void buildLinuxRelease() {
 
     if(exec {
         commandLine "cmake", "../src", "-DCMAKE_BUILD_TYPE=RELEASE",
-                "-DCMAKE_TOOLCHAIN_FILE=${new File("../native/toolchains/linux-x86_64.cmake").getAbsolutePath()}"
+                "-DCMAKE_TOOLCHAIN_FILE=${new File("../native/toolchains/linux-x86_64.cmake").getAbsolutePath()}",
+                "-DCMAKE_C_COMPILER=gcc-8", "-DCMAKE_CXX_COMPILER=g++-8"
         workingDir = nativeBuildDir
         standardOutput = prefixedOutputStream("[CMAKE/STDOUT => GEN/LINUX] ", System.out)
         errorOutput = prefixedOutputStream("[CMAKE/STDERR => GEN/LINUX] ", System.err)
@@ -457,7 +458,9 @@ task buildDevLibrary(dependsOn: updateSubmodules) {
 
     doLast {
         if(exec {
-            commandLine "cmake", "../src", "-DCMAKE_BUILD_TYPE=DEBUG", "-G", (Os.isFamily(Os.FAMILY_WINDOWS) ? "MinGW Makefiles" : "Unix Makefiles")
+            commandLine "cmake", "../src", "-DCMAKE_BUILD_TYPE=DEBUG", "-G", (Os.isFamily(Os.FAMILY_WINDOWS) ? "MinGW Makefiles" : "Unix Makefiles"),
+            (Os.isFamily(Os.FAMILY_UNIX) ? "-DCMAKE_C_COMPILER=gcc-8" : ""),
+            (Os.isFamily(Os.FAMILY_UNIX) ? "-DCMAKE_CXX_COMPILER=g++-8" : "")
             workingDir = nativeBuildDir
             standardOutput = prefixedOutputStream("[CMAKE/STDOUT => GEN] ", System.out)
             errorOutput = prefixedOutputStream("[CMAKE/STDERR => GEN] ", System.err)
